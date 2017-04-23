@@ -1,0 +1,119 @@
+[
+{
+    "model": "poll.question",
+    "pk": 1,
+    "fields": {
+        "question_text": "What's Up?",
+        "pub_date": "2017-04-05T02:51:35Z"
+    }
+},
+{
+    "model": "poll.question",
+    "pk": 2,
+    "fields": {
+        "question_text": "Who is the best T20 opener in Cricket?",
+        "pub_date": "2017-04-06T06:00:00Z"
+    }
+},
+{
+    "model": "poll.question",
+    "pk": 3,
+    "fields": {
+        "question_text": "Who is the best Opening bowler in T20 Cricket?",
+        "pub_date": "2017-04-04T14:07:43Z"
+    }
+},
+{
+    "model": "poll.question",
+    "pk": 4,
+    "fields": {
+        "question_text": "Who will win the Election 2017 ?",
+        "pub_date": "2017-04-21T01:42:20.420Z"
+    }
+},
+{
+    "model": "poll.choice",
+    "pk": 1,
+    "fields": {
+        "question": 2,
+        "choice_text": "Chris Gayle",
+        "votes": 22
+    }
+},
+{
+    "model": "poll.choice",
+    "pk": 2,
+    "fields": {
+        "question": 2,
+        "choice_text": "Johnson Charles",
+        "votes": 10
+    }
+},
+{
+    "model": "poll.choice",
+    "pk": 3,
+    "fields": {
+        "question": 2,
+        "choice_text": "Sherwin Campbell",
+        "votes": 10
+    }
+},
+{
+    "model": "poll.choice",
+    "pk": 4,
+    "fields": {
+        "question": 2,
+        "choice_text": "Virat Kohli",
+        "votes": 10
+    }
+},
+{
+    "model": "poll.choice",
+    "pk": 5,
+    "fields": {
+        "question": 2,
+        "choice_text": "AB De Villiars",
+        "votes": 9
+    }
+},
+{
+    "model": "poll.choice",
+    "pk": 6,
+    "fields": {
+        "question": 3,
+        "choice_text": "Samuel Badree",
+        "votes": 30
+    }
+},
+{
+    "model": "poll.choice",
+    "pk": 7,
+    "fields": {
+        "question": 3,
+        "choice_text": "Sunil Narine",
+        "votes": 16
+    }
+},
+{
+    "model": "poll.post",
+    "pk": 1,
+    "fields": {
+        "author": 2,
+        "title": "Django Girls",
+        "text": "Has lot to offer",
+        "created_date": "2017-04-06T15:07:52Z",
+        "published_date": "2017-04-07T14:57:59.371Z"
+    }
+},
+{
+    "model": "poll.post",
+    "pk": 2,
+    "fields": {
+        "author": 1,
+        "title": "Developer Mozilla",
+        "text": "https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django  \r\nhas more to offer",
+        "created_date": "2017-04-05T00:00:00Z",
+        "published_date": "2017-04-07T14:57:59.497Z"
+    }
+}
+]

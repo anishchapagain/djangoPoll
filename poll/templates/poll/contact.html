@@ -1,0 +1,34 @@
+{% extends "poll/base.html" %}
+
+{% block content %}
+    <div id="content-main">
+    <h2>Send Email </h2>
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <div>
+                <fieldset class="module aligned ">
+                    <div class="form-row">
+                        <p>{{ form.subject.help_text }} : </p>
+                        {{ form.subject.errors }}
+                        {{ form.subject }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.emailAddress.help_text }} : </p>
+                        {{ form.emailAddress.errors }}
+                        {{ form.emailAddress }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.message.help_text }} : </p>
+                        {{ form.message.errors }}
+                        {{ form.message }}
+                    </div>
+                </fieldset>
+                <input type="submit" value="Send Mail" class="default" name="_save">
+            </div>
+
+            <div class="submit-row">
+{#                <input type="submit" value="Save and add another" name="_addanother">#}
+{#                <input type="submit" value="Save and continue editing" name="_continue">#}
+            </div>
+        </form>
+    </div>
+{% endblock %}

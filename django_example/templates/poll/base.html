@@ -1,0 +1,43 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Django Project">
+    <meta name="author" content="Anish Chapagain">
+    <title>Poll System</title>
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
+    <link href="{% static "css/base.css" %}" rel="stylesheet">
+    <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
+</head>
+
+<body class="dashboard">
+<div id="container">
+    <div id="header">
+        <div id="branding">
+            <h1 id="site-name">Poll System</h1>
+        </div>
+        <div id="user-tools">
+            <p>
+                <a href="/poll/" style="color:red">Poll</a> //
+                <a href="/poll/" style="color:#fdffee">Poll</a>
+                - - - -
+            Vote for T20 best opening Bowlers and Batsman</p>
+        </div>
+    </div>
+    <hr/>
+
+    <div id="content" class="colMS">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+    <div id="footer">
+        <div class="center">
+         <div class="contentinfo">
+          <p>DjangoProject POLL , <a href="http://www.djangoproject.com">DjangoProject.com</a></p>
+        </div>
+        </div>
+    </div>
+</body>
+</html>

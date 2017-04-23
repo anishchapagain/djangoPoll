@@ -1,0 +1,46 @@
+{% extends "poll/base.html" %}
+
+{% block content %}
+    <h3>Total Accumulated Votes are: {{ total_votes.sumofvotes }} </h3><br/>
+    {% for q in question %}
+        {% comment %} Extending Count for each Poll Question {% endcomment %}
+        <h3>
+            {{ q.id }} - {{ q.question_text }}
+            {% for score,value in score_total.items %}
+                {% if q.id == score %}
+                    <small>Total: {{ value }}</small>
+                {% endif %}
+            {% endfor %}
+        </h3>
+
+        <ul>
+            {% for c in choice %}
+                {% if c.question_id == q.id %}
+                    <li>{{ c.choice_text|upper }} -- {{ c.votes }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
+    <h3>Total Accumulated Votes are: {{ total_votes.sumofvotes }} </h3>
+    {% if question.has_other_pages %}
+        <ul class="pagination">
+            {% if question.has_previous %}
+                <li><a href="?page={{ question.previous_page_number }}">&laquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in question.paginator.page_range %}
+                {% if question.number == i %}
+                    <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                    <li><a href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if question.has_next %}
+                <li><a href="?page={{ question.next_page_number }}">&raquo;</a></li>
+            {% else %}
+                <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+        </ul>
+    {% endif %}
+{% endblock %}

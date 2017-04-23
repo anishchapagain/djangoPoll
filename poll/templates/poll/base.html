@@ -1,0 +1,52 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Django Project">
+    <meta name="author" content="Anish Chapagain">
+    <title>T20 Cricket: Polls</title>
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
+    <link href="{% static "css/base.css" %}" rel="stylesheet">
+    <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
+</head>
+
+<body class="dashboard">
+<div id="container">
+    <div id="header">
+        <div id="branding">
+            <h1 id="site-name">T20 Cricket: Poll System</h1>
+        </div>
+        <div id="user-tools">
+            <p>
+                <a href="/admin/" style="color:#fffcc4">Admin</a> //
+                <a href="/poll/" style="color:#fdffee">Poll</a> //
+                <a href="/poll/profile/" style="color:#fdffee">Profile</a> //
+                <a href="/poll/email/" style="color:#fdffee">Contact Email</a> //
+                - - - -
+                Vote for T20 Cricket POLLS</p>
+        </div>
+    </div>
+    <div class="breadcrumbs">
+        <a href="/poll/"> POLL </a>
+        >>
+        <a href="/poll/viewall"> View ALL Results </a>
+    </div>
+    <hr/>
+
+    <div id="content" class="colMS">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+<div id="footer">
+    <div class="center">
+        <div class="contentinfo">
+
+            <p>T20 Poll System</p>
+            <p>DjangoProject , <a href="http://www.djangoproject.com">DjangoProject.com</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

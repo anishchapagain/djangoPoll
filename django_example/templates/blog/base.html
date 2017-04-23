@@ -1,0 +1,25 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Django Project">
+    <meta name="author" content="Anish Chapagain">
+    <title>Blog - title</title>
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
+</head>
+<body>
+<a href="/blogs/">View Blogs</a>
+<a href="/polls/blogs/">List Blogs</a>
+<hr />
+<div id="content" style="border:1px solid #efefef">
+{% block content %}
+{% endblock %}
+</div>
+<hr/>
+<div id="sidebar">
+<h2>My blog</h2>
+<p>This is my blog.</p>
+</div>
+</body>
+</html>

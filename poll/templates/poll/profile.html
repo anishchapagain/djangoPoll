@@ -1,0 +1,48 @@
+{% extends "poll/base.html" %}
+
+{% block content %}
+    <div id="content-main">
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <div>
+                <fieldset class="module aligned ">
+                    <div class="form-row">
+                        <p>{{ form.firstname.help_text }} : </p>
+                        {{ form.firstname.errors }}
+                        {{ form.firstname }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.lastname.help_text }} : </p>
+                        {{ form.lastname.errors }}
+                        {{ form.lastname }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.middlename.help_text }} : </p>
+                        {{ form.middlename.errors }}
+                        {{ form.middlename }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.dob.help_text }} : </p>
+                        {{ form.dob.errors }}
+                        {{ form.dob }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.country.help_text }} : </p>
+                        {{ form.country.errors }}
+                        {{ form.country }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.photo.help_text }} : </p>
+                        {{ form.photo.errors }}
+                        {{ form.photo }}
+                    </div>
+                </fieldset>
+                <input type="submit" value="Register Profile" class="default" name="_save">
+            </div>
+
+            <div class="submit-row">
+                <input type="submit" value="Save and add another" name="_addanother">
+                <input type="submit" value="Save and continue editing" name="_continue">
+            </div>
+        </form>
+    </div>
+{% endblock %}

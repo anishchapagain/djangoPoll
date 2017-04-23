@@ -1,0 +1,19 @@
+{% extends "poll/base.html" %}
+
+{% block content %}
+<h1>{{ question.question_text }}</h1>
+
+<ul>
+{% for choice in question.choice_set.all %}
+    {% if choice.votes >= 20 %}
+    <li><b>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</b></li>
+    {% else %}
+    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    {% endif %}
+{% endfor %}
+</ul>
+
+<input type="button" name="vote_again" value="Vote Again" onclick="location.href='{% url 'poll:detail' question.id %}'" title="Vote again"/>
+{#<a href="{% url 'poll:detail' question.id %}">Vote again?</a>#}
+
+{% endblock %}

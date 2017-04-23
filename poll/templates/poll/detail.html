@@ -1,0 +1,33 @@
+{% extends "poll/base.html" %}
+{% block content %}
+
+<h1>{{ question.question_text }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<form action="{% url 'poll:vote' question.id %}" method="post">
+{% csrf_token %}
+{% for choice in question.choice_set.all %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
+{% endfor %}
+<input type="submit" value="Vote" title="Vote for Listed Options"/>&nbsp;&nbsp;
+<input type="button" name="add_choice" value="+ New Option" onclick="location.href='{% url 'poll:add_choice' question.id %}'" title="Add New Option for Question Choosen!"/>
+<input type="button" class="btn btn-danger" style="color:darkred;" name="delete_question" value="Delete Question" onclick="location.href='{% url 'poll:delete_question' question.id %}'" title="Delete POLL Question!"/>
+</form>
+    <br />
+<hr style="color:#c4e3f3;">
+
+<section>
+<h3>Total Votes Count : {{ question_total_votes }}</h3>
+<ul>
+{% for choice in question.choice_set.all %}
+    {% if choice.votes >= 20 %}
+    <li><b>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</b></li>
+    {% else %}
+    <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    {% endif %}
+{% endfor %}
+</ul>
+</section>
+{% endblock %}

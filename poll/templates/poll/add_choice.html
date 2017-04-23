@@ -1,0 +1,29 @@
+{% extends "poll/base.html" %}
+
+{% block content %}
+    <div id="content-main">
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <div>
+                <fieldset class="module aligned ">
+                    <h1>{{ question.id }} - {{ question.question_text }}</h1>
+                    <div class="form-row">
+                        <div><label>{{ form.choice_text.help_text }} : </label></div>
+                        {{ form.choice_text.errors }}
+                        {{ form.choice_text }}
+                    </div>
+                    <div class="form-row">
+                        <div><label>{{ form.votes.help_text }} : </label></div>
+                        {{ form.votes.errors }}
+                        {{ form.votes }}
+                        <input type="hidden" id="question_id" name="question" value="{{ question.id}}" />
+                    </div>
+                </fieldset>
+            </div>
+            <div class="submit-row">
+                <input type="submit" value="Save" class="default" name="_save">
+{#                <input type="submit" value="Save and add another" name="_addanother">#}
+{#                <input type="submit" value="Save and continue editing" name="_continue">#}
+            </div>
+        </form>
+    </div>
+{% endblock %}
