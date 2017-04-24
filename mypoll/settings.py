@@ -26,7 +26,9 @@ SECRET_KEY = '67u%krbh_fz_$jjdebl*zfos)fo6*)h74#4h_725*lao$du9m!'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-EMAIL_BACKEND = 'django.core.mail.backends.consolo.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+LOGIN_REDIRECT_URL='/poll/index/'
+LOGOUT_REDIRECT_URL='/poll/login/'
 
 
 # Application definition

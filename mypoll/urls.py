@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from poll import views
+from django.contrib.auth import views as auth_views
 
 app_name="poll"
 
@@ -25,6 +26,5 @@ urlpatterns = [
     # url(r'^$',views.IndexView.as_view(), name='index'),
     url(r'^$',views.IndexView, name='index'),
     # url(r'^blogs/', include('poll.urls')),
-    # url(r'[a-eA-E]{1}', include('poll.urls')),
     url(r'^admin/', admin.site.urls),
 ]

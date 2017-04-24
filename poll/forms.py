@@ -2,6 +2,8 @@ from django import forms
 from poll.models import Question, Choice, Contact
 from datetime import datetime
 from django.utils import timezone
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 # POLL FORMS #
 class QuestionForm(forms.ModelForm):
@@ -43,3 +45,13 @@ class ChoiceDeleteForm(forms.ModelForm):
     class Meta:
         model = Choice
         fields = "__all__"
+
+
+class SignUpForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
+    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
+    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', )

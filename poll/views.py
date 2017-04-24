@@ -9,6 +9,10 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnIn
 
 from poll.forms import QuestionForm, ChoiceForm, ProfileForm,ContactForm, ChoiceDeleteForm
 from poll.models import Question, Choice, Contact
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from poll.forms import SignUpForm
+from django.contrib.auth.models import User
 
 
 # class IndexView(generic.ListView):
@@ -29,7 +33,7 @@ from poll.models import Question, Choice, Contact
 
 def IndexView(request):
     template_name = 'poll/index.html'
-    questions = Question.objects.order_by('pub_date')[:5]
+    questions = Question.objects.order_by('pub_date')[:20]
     return render(request, template_name, {'questions': questions})
 
 
@@ -60,7 +64,7 @@ def viewAllResults(request):
     print(score_total)
     total_votes = Choice.objects.all().aggregate(sumofvotes=Sum('votes'))
     page = request.GET.get('page', 1)
-    paginator = Paginator(question, 2)
+    paginator = Paginator(question, 5)
     try:
         question = paginator.page(page)
     except PageNotAnInteger:
@@ -139,17 +143,19 @@ def add_choice(request, question_id):
         form = ChoiceForm()
     return render(request, 'poll/add_choice.html', {'form': form, 'question': question})
 
-def profile(request):
-    if request.method == 'POST':
-        form = ProfileForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return render(request, 'poll/profile.html', {'form': form})
-        else:
-            print(form.errors)
-    else:
-        form = ProfileForm()
-    return render(request, 'poll/profile.html', {'form': form})
+def profile(request,username):
+    user=User.objects.get(username=username)
+    return render(request,"poll/profile.html",{'user':user})
+#     if request.method == 'POST':
+#         form = ProfileForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return render(request, 'poll/profile.html', {'form': form})
+#         else:
+#             print(form.errors)
+#     else:
+#         form = ProfileForm()
+#     return render(request, 'poll/profile.html', {'form': form})
 
 def delete_question(request, question_id):
     if request.method=='GET':
@@ -157,3 +163,16 @@ def delete_question(request, question_id):
         print("Question Deleted")
     return viewAllResults(request)
 
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home')
+    else:
+        form = SignUpForm()
+    return render(request, 'poll/signup.html', {'form': form})

@@ -1,0 +1,18 @@
+{% extends 'poll/base_user.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div align="center">
+  <h1>Welcome to T20 Cricket: POLL System</h1>
+    <br><br>
+  <h3>Proceed with your Login: </h3>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" class="default" value="Login" />
+    <input type="button" name="Login" value="Create User" onclick="location.href='{% url 'poll:signup' %}'" title="Register New user Profile"/>
+
+  </form>
+    </div>
+{% endblock %}
