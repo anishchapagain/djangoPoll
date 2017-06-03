@@ -55,3 +55,19 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', )
+
+
+class FilterResults(forms.Form):
+    FILTER_SET = (
+        ('','    _ _ Select Option  _ _   '),
+        (10, 'Votes > 10'),
+        (20, 'Votes > 20'),
+        (5, 'Votes < 5'),
+        (0, 'Votes <= 0')
+    )
+    # status = forms.ChoiceField(choices=FILTER_SET,help_text='Voting Filters')
+    # status = forms.ChoiceField(help_text='Voting Filters',required=True,choices=FILTER_SET)
+    status = forms.ChoiceField(help_text='Voting Filters',required=True,choices=FILTER_SET,widget=forms.Select(attrs={'onchange':'showValue();'}))
+    class Meta:
+        model = Question,Choice
+        fields = ('status')

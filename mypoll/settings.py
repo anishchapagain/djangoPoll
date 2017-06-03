@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'poll.apps.PollConfig'
-]
+    'poll.apps.PollConfig',
+    'poll.fusioncharts',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -123,4 +124,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'static')
 # <link rel="shortcut icon" href="https://www.djangoproject.com/s/img/favicon.6dbf28c0650e.ico">
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, "static"),
+# ]

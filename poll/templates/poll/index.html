@@ -1,15 +1,81 @@
 {% extends "poll/base.html" %}
-
 {% block content %}
-{% if questions %}
-    <ul>
-   {% for question in questions %}
-        <li><a href="{% url 'poll:detail' question.id %}">{{ question.question_text }}</a></li>
-    {% endfor %}
-    </ul>
-    {% comment %}<h1><a href="{% url 'poll:add_poll' %}" class="btn-default">New POLL</a></h1>{% endcomment %}
-    <input type="button" value="New POLL" onclick="location.href='{% url 'poll:add_poll' %}'" title="Add New Poll Question"/>
-{% else %}
-    <p>No polls are available.</p>
-{% endif %}
+    <script type="text/javascript">
+
+        function showValue() {
+            var oVal = document.getElementById("id_status");
+            var value = oVal.options[oVal.selectedIndex].value;
+            alert(oVal+ " >> "+ value);
+            $.ajax({
+                async: true,
+                {#                contentType: "application/json",#}
+                url: '/poll/index/',
+                type: 'POST',
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    status: value
+                },
+                success: function (data) {
+                    {#                    console.log(data);#}
+{#                    $('#chart-1').load(' #chart-1');#}
+                    $("#chart-1").html(data);
+{#                    $("#chart-1").load(data);#}
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#id_status").change(function () {
+                alert("change");
+{#            window.top.location.reload(false);#}
+                showValue();
+            });
+        });
+
+    </script>
+    <input type="button" onclick="show();" title="Button 1"/>
+    {% if questions %}
+        <ul>
+            {% for question in questions %}
+                <li><a href="{% url 'poll:detail' question.id %}">{{ question.question_text }}</a></li>
+            {% endfor %}
+        </ul>
+        {% comment %}<h1><a href="{% url 'poll:add_poll' %}" class="btn-default">New POLL</a></h1>{% endcomment %}
+        <input type="button" value="New POLL" onclick="location.href='{% url 'poll:add_poll' %}'"
+               title="Add New Poll Question"/>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+    <br/>
+    <hr>
+    <p>Filtering</p>
+    <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div>
+            <fieldset class="module aligned ">
+                <div class="form-row">
+                    <!--<p>{{ form.status.help_text }} : </p>-->
+                    {{ form.status.errors }}
+                    {{ form.status }}
+                    <input type="submit" value="Filter" class="default" name="_save" id="shownow"
+                           title="Select List of Available Filters">
+                </div>
+            </fieldset>
+        </div>
+
+    </form>
+    <div id="chart-1" style="border:1px solid #efefef">{{ output|safe }}</div>
+
 {% endblock %}
+
+{#def mypage(request):#}
+{##}
+{#    details = Personal_details.objects.select_related().filter(experience=3)#}
+{#    names = [d.reg.name for d in details]#}
+{##}
+{#    return render(request, 'mypage.html', {'names': names})#}
+
+{#{% for name in names %}#}
+{#        <li>{{ name }}</li>#}
+{#    {% empty %}#}
+{#        <li>Nobody has 3 experience!</li>#}
+{#    {% endfor %}#}
