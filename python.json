@@ -1,5 +1,0 @@
-{
-	"deploy": {
-		"module":"cc_django.wsgi:application"
-	}
-}
