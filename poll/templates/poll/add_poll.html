@@ -10,13 +10,15 @@
                         {{ form.question_text.errors }}
                         {{ form.question_text }}
                     </div>
+                   
                 </fieldset>
                 <input type="submit" value="Save" class="default" name="_save">
             </div>
-        </form>
+        
         <div class="submit-row">
-{#            <input type="submit" value="Save and add another" name="_addanother">#}
-{#            <input type="submit" value="Save and continue editing" name="_continue">#}
+            <input type="submit" value="Save and add another" name="_addanother">
+            <input type="submit" value="Save and continue editing" name="_continue">
         </div>
+    </form>
     </div>
 {% endblock %}

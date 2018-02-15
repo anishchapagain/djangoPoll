@@ -8,8 +8,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 
 from poll.fusioncharts import FusionCharts  # HighCharts D3
-from fusioncharts import FusionCharts  # HighCharts D3
-# from highcharts import Highchart
+#from fusioncharts import FusionCharts  # HighCharts D3
+#from highcharts import Highchart
 from poll.forms import QuestionForm, ChoiceForm, ContactForm
 from poll.forms import SignUpForm, FilterResults
 from poll.models import Question, Choice, Contact
@@ -65,7 +65,7 @@ def IndexView(request):
             choices_filtering = Choice.objects.all().filter(votes__lte=0).order_by('choice_text')
 
         dataPlot = choices_filtering  # Choice.objects.all().filter(votes__gte=10).order_by('choice_text')
-        columnChart = chart(dataPlot, plotType="column2d", subCaption=status)  # pie3d column2d
+        columnChart = chart(dataPlot, plotType="column3d", subCaption=status)  # pie3d column2d
         return render(request, template_name,
                             {'title': 'T20 Index Page', 'head': 'T20 Index Head', 'questions': questions, 'form': form,
                              'output': columnChart.render()})
@@ -235,25 +235,33 @@ def chart(dataPlot, plotType, subCaption):
     """Data source """
     chartType = plotType  # "column2d"#pie3d
     chartID = "chart-1"  # chart ID unique for Page
-    chartHeight = "800"  # chart Height
-    chartWidth = "150%"  # chart Width
+    chartHeight = "100%"  # chart Height
+    chartWidth = "100%"  # chart Width
     chartDataFormat = "json"  # json xml
     dataSource = {}
     dataSource['chart'] = {}
     dataSource['chart']['caption'] = "World T20 Cricket POLL"
     dataSource['chart']['subCaption'] = "Votes (" + subCaption + ")"
-    dataSource['chart']['xAsixName'] = ""
-    dataSource['chart']['yAsixName'] = ""
+    dataSource['chart']['xAxisName'] = "Questions"
+    dataSource['chart']['yAxisName'] = "Votes Count"
     dataSource['chart']['numberPrefix'] = ""
     dataSource['chart']['startingangle'] = "120"  # pie3d
     dataSource['chart']['slicingdistance'] = "10"  # pie3d
     dataSource['chart']['rotatevalues'] = "1"
     dataSource['chart']['plotToolText'] = "<div><b>$label</b><br/>Votes : <b>$value</b></div>"
-    dataSource['chart']['theme'] = "fint"  # ‘carbon’, ‘fint’, ‘ocean’, ‘zune’
-    dataSource['chart']['animation'] = "1"  # ‘carbon’, ‘fint’, ‘ocean’, ‘zune’
-    dataSource['chart']['animationDuration'] = "1"  # ‘carbon’, ‘fint’, ‘ocean’, ‘zune’
+    dataSource['chart']['theme'] = "zune"  # ‘carbon’, ‘fint’, ‘ocean’, ‘zune’
+    dataSource['chart']['animation'] = "1"  
+    dataSource['chart']['animationDuration'] = "1" 
     dataSource['chart']['exportEnabled'] = "1"
-    # dataSource['chart']['maxZoomLimit'] = 1000
+    dataSource['chart']['use3DLighting'] = "1"
+    dataSource['chart']['maxZoomLimit'] = 100
+    dataSource['chart']['labelDisplay'] = "Wrap"
+    dataSource['chart']['placeValuesInside'] = "1"
+    dataSource['chart']['legendPosition']='RIGHT'
+    dataSource['chart']['plotGradientColor']='black'
+    dataSource['chart']['slantLabels']='1'
+
+
     dataSource['data'] = []
     for item in dataPlot:
         q = get_object_or_404(Question, id=item.question_id)
@@ -267,7 +275,7 @@ def chart(dataPlot, plotType, subCaption):
 
 def plot(request, chartID='chart_ID', chart_type='line', chart_height=500):
     data = ChartData.check_valve_data()
-    print(data)
+    # print(data)
 
     chart = {"renderTo": chartID, "type": chart_type, "height": chart_height, "width": chart_height}
     title = {"text": 'Votes Results'}
@@ -291,7 +299,7 @@ def home(request):
         # form = FilterResults(request.POST)
         status = request.POST['filter_option']
         form = FilterResults(request.POST)
-        print("in home ", status)
+        # print("in home ", status)
         if status == "10":
             choices_filtering = Choice.objects.all().filter(votes__gte=10).order_by('choice_text')
         elif status == "20":

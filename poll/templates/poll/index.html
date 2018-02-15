@@ -3,34 +3,35 @@
     <script type="text/javascript">
 
         function showValue() {
-            var oVal = document.getElementById("id_status");
-            var value = oVal.options[oVal.selectedIndex].value;
-            alert(oVal+ " >> "+ value);
+            // var oVal = document.getElementById("id_status");
+            // var value = oVal.options[oVal.selectedIndex].value;
+            // alert(oVal+ " >> "+ value);
             $.ajax({
                 async: true,
-                {#                contentType: "application/json",#}
+                // {#                contentType: "application/json",#}
                 url: '/poll/index/',
                 type: 'POST',
                 data: {
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
-                    status: value
+                   // status: value
                 },
                 success: function (data) {
-                    {#                    console.log(data);#}
-{#                    $('#chart-1').load(' #chart-1');#}
-                    $("#chart-1").html(data);
-{#                    $("#chart-1").load(data);#}
+                    // {#                    console.log(data);#}
+// {#                    $('#chart-1').load(' #chart-1');#}
+                    // $("#chart-1").html(data);
+                    $("#chart-1").load(data);
+                    // $("#chart-1").render(data);
                 }
             });
         }
 
-        $(document).ready(function () {
-            $("#id_status").change(function () {
-                alert("change");
-{#            window.top.location.reload(false);#}
-                showValue();
-            });
-        });
+        // $(document).ready(function () {
+            // $("#id_status").change(function () {
+                // alert("change");
+// {#            window.top.location.reload(false);#}
+                // showValue();
+            // });
+        // });
 
     </script>
     <input type="button" onclick="show();" title="Button 1"/>
@@ -63,7 +64,7 @@
         </div>
 
     </form>
-    <div id="chart-1" style="border:1px solid #efefef">{{ output|safe }}</div>
+    <div id="chart-1" style="border:1px solid #efefef" width="100%">{{ output|safe }}</div>
 
 {% endblock %}
 
