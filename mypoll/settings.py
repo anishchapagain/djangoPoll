@@ -29,6 +29,7 @@ ALLOWED_HOSTS = []
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 LOGIN_REDIRECT_URL='/poll/index/'
 LOGOUT_REDIRECT_URL='/poll/login/'
+LOGIN_URL='/poll/login/'
 
 
 # Application definition
@@ -122,7 +123,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
 # <link rel="shortcut icon" href="https://www.djangoproject.com/s/img/favicon.6dbf28c0650e.ico">
