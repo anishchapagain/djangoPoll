@@ -7,12 +7,12 @@ from django.contrib.auth.models import User
 
 # POLL FORMS #
 class QuestionForm(forms.ModelForm):
-    #question_text = forms.CharField(max_length=200, help_text="Please enter the question.")
-    #pub_date = forms.DateTimeField(help_text="Please enter Date.",initial = timezone.now)
+    # question_text = forms.CharField(max_length=200, help_text="Please enter the question.")
+    # pub_date = forms.DateTimeField(help_text="Please enter Date.",initial = timezone.now)
     class Meta:
         model = Question
-        fields = "__all__"
-        # fields = ('question_text',)
+        # fields = '__all__'
+        fields = ('question_text',)
 
 class ChoiceForm(forms.ModelForm):
     class Meta:
@@ -50,7 +50,7 @@ class ChoiceDeleteForm(forms.ModelForm):
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
     last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+    email = forms.EmailField(max_length=254, help_text='Required. Input a valid email address.')
 
     class Meta:
         model = User
@@ -59,15 +59,30 @@ class SignUpForm(UserCreationForm):
 
 class FilterResults(forms.Form):
     FILTER_SET = (
-        ('','    _ _ Select Option  _ _   '),
+        ('','    - - Select Option  - -   '),
         (10, 'Votes > 10'),
         (20, 'Votes > 20'),
         (5, 'Votes < 5'),
         (0, 'Votes <= 0')
     )
     # status = forms.ChoiceField(choices=FILTER_SET,help_text='Voting Filters')
-    # status = forms.ChoiceField(help_text='Voting Filters',required=True,choices=FILTER_SET)
-    status = forms.ChoiceField(help_text='Voting Filters',required=True,choices=FILTER_SET,widget=forms.Select(attrs={'onchange':'showValue();'}))
+    status = forms.ChoiceField(help_text='Voting Filters',required=True,choices=FILTER_SET)
+    # status = forms.ChoiceField(help_text='Voting Filters',required=True,choices=FILTER_SET,widget=forms.Select(attrs={'onchange':'showValue();'}))
+    class Meta:
+        model = Question,Choice
+        fields = ('status')
+
+class AJAXFilterResults(forms.Form):
+    AJAXFILTER_SET = (
+        ('','    - - Select Option  - -   '),
+        (10, 'Votes > 10'),
+        (20, 'Votes > 20'),
+        (5, 'Votes < 5'),
+        (0, 'Votes <= 0')
+    )
+    # status = forms.ChoiceField(choices=FILTER_SET,help_text='Voting Filters')
+    status = forms.ChoiceField(help_text='Voting Filters',required=True,choices=AJAXFILTER_SET)
+    # status = forms.ChoiceField(help_text='Voting Filters',required=True,choices=AJAXFILTER_SET,widget=forms.Select(attrs={'onchange':'showValue();'}))
     class Meta:
         model = Question,Choice
         fields = ('status')

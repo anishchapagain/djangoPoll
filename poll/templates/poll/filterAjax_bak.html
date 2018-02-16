@@ -1,0 +1,57 @@
+{% extends "poll/base.html" %}
+{% block content %}
+    <script type="text/javascript">
+
+        function showValue() {
+            var oVal = document.getElementById("id_status");
+            var value = oVal.options[oVal.selectedIndex].value;
+            alert(oVal + " >> " + value);
+            $.ajax({
+                async: true,
+                {#                contentType: "application/json",#}
+                url: '/poll/filter/',
+                type: 'get',
+                data: {
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                    status: value
+                },
+                success: function (data) {
+                    console.log(data);
+
+{#                    $("#chart-1").html(data);#}
+                    $("#chart-1").load(data);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            alert('ready');
+            var oVal = document.getElementById("id_status");
+            var value = oVal.options[oVal.selectedIndex].value;
+            alert("Ready "+oVal + " >> " + value);
+            $("#id_status").change(function () {
+                alert("change");
+                showValue();
+            });
+        });
+
+    </script>
+    <p>Filtering</p>
+    {#    <form enctype="multipart/form-data">{% csrf_token %}#}
+    <div>
+        <fieldset class="module aligned ">
+            <div class="form-row">
+                <p>{{ form.status.help_text }} : </p>
+                {{ form.status.errors }}
+                {{ form.status }}
+                {#                    <input type="submit" value="Filter" class="default" name="_save" id="shownow"#}
+                {#                           title="Select List of Available Filters">#}
+            </div>
+        </fieldset>
+    <div id="chart-1" style="border:1px solid #efefef">{{ output|safe }}</div>
+    </div>
+
+    {#    </form>#}
+{#    <div id="chart-1" style="border:1px solid #efefef">{{ output|safe }}</div>#}
+
+{% endblock %}

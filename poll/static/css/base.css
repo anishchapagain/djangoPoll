@@ -757,7 +757,13 @@ table#change-history tbody th {
 }
 
 .dashboard #content {
-    width: 600px;
+    width: 800px;
+}
+#contentBig {
+    padding: 20px 40px;
+}
+.dashboard #contentBig {
+    width: 800px;
 }
 
 #content-main {

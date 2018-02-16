@@ -2,54 +2,66 @@
 
 {% block content %}
     <div id="content-main">
+        <b>Details</b>
+        <div class="form-row">
+            <p>Username : {{ user.username }} </p>
+        </div><div class="form-row">
+            <p>Firstname : {{ user.first_name|title }} Lastname : {{ user.last_name|upper}}</p>
+        </div>
+        <div class="form-row">
+            <p>Email : {{ user.email }}</p>
+        </div>
+        <div class="form-row">
+            <p>LastLogin : {{ user.last_login}}</p> <!--filter date & time-->
+        </div> <div class="form-row">
+            <p>Created Date : {{ user.date_joined|date}}</p> <!--filter date & time-->
+        </div>
+        <div class="form-row">
+            <p>Is Active : {{ user.is_active }}</p>
+        </div>
+        <br/><hr>
+        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <div>
+{#                {{ form.as_p }}#}
+                <fieldset class="module aligned ">
+                    <div class="form-row">
+                        <p>{{ form.firstname.help_text }} : </p>
+                        {{ form.firstname.errors }}
+                        {{ form.firstname }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.lastname.help_text }} : </p>
+                        {{ form.lastname.errors }}
+                        {{ form.lastname }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.middlename.help_text }} : </p>
+                        {{ form.middlename.errors }}
+                        {{ form.middlename }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.dob.help_text }} : </p>
+                        {{ form.dob.errors }}
+                        {{ form.dob }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.country.help_text }} : </p>
+                        {{ form.country.errors }}
+                        {{ form.country }}
+                    </div>
+                    <div class="form-row">
+                        <p>{{ form.photo.help_text }} : </p>
+                        {{ form.photo.errors }}
+                        {{ form.photo }}
+                    </div>
+                </fieldset>
+                <input type="submit" value="Register Profile" class="default" name="_save">
+            </div>
 
-    {{ user.username }}
-{{ user.email }}
-{{ user.first_name }}
-{{ user.last_name }}
-
-
-{#        <form action="" method="post" enctype="multipart/form-data">{% csrf_token %}#}
-{#            <div>#}
-{#                <fieldset class="module aligned ">#}
-{#                    <div class="form-row">#}
-{#                        <p>{{ form.firstname.help_text }} : </p>#}
-{#                        {{ form.firstname.errors }}#}
-{#                        {{ form.firstname }}#}
-{#                    </div>#}
-{#                    <div class="form-row">#}
-{#                        <p>{{ form.lastname.help_text }} : </p>#}
-{#                        {{ form.lastname.errors }}#}
-{#                        {{ form.lastname }}#}
-{#                    </div>#}
-{#                    <div class="form-row">#}
-{#                        <p>{{ form.middlename.help_text }} : </p>#}
-{#                        {{ form.middlename.errors }}#}
-{#                        {{ form.middlename }}#}
-{#                    </div>#}
-{#                    <div class="form-row">#}
-{#                        <p>{{ form.dob.help_text }} : </p>#}
-{#                        {{ form.dob.errors }}#}
-{#                        {{ form.dob }}#}
-{#                    </div>#}
-{#                    <div class="form-row">#}
-{#                        <p>{{ form.country.help_text }} : </p>#}
-{#                        {{ form.country.errors }}#}
-{#                        {{ form.country }}#}
-{#                    </div>#}
-{#                    <div class="form-row">#}
-{#                        <p>{{ form.photo.help_text }} : </p>#}
-{#                        {{ form.photo.errors }}#}
-{#                        {{ form.photo }}#}
-{#                    </div>#}
-{#                </fieldset>#}
-{#                <input type="submit" value="Register Profile" class="default" name="_save">#}
-{#            </div>#}
-{##}
-{#            <div class="submit-row">#}
+            <div class="submit-row">
 {#                <input type="submit" value="Save and add another" name="_addanother">#}
 {#                <input type="submit" value="Save and continue editing" name="_continue">#}
-{#            </div>#}
-{#        </form>#}
+            </div>
+        </form>
     </div>
 {% endblock %}

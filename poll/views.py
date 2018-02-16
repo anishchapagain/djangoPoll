@@ -2,17 +2,17 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.core.mail import BadHeaderError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-
-from poll.fusioncharts import FusionCharts  # HighCharts D3
-#from fusioncharts import FusionCharts  # HighCharts D3
-#from highcharts import Highchart
-from poll.forms import QuestionForm, ChoiceForm, ContactForm
-from poll.forms import SignUpForm, FilterResults
+from django.core import serializers
+from poll.fusioncharts import FusionCharts
+from poll.forms import QuestionForm, ChoiceForm, ContactForm, ProfileForm
+from poll.forms import SignUpForm, FilterResults, AJAXFilterResults
 from poll.models import Question, Choice, Contact
+from django.contrib.auth.decorators import login_required
+from django.core.files.storage import FileSystemStorage
 
 
 # class IndexView(generic.ListView):
@@ -42,52 +42,120 @@ class ChartData(object):
         return data
 
 
+def get_queryset(query):
+    if query:
+        print("Searching :", query)
+        query_list = query.split()
+        results={}
+        count=0
+        for q in query_list:
+            try:
+                # val = list(Choice.objects.filter(choice_text__icontains=q))
+                val1 = list(Question.objects.filter(question_text__contains=q))#.filter(question_text__icontains=q).filter(question_text__exact=q))
+                # val2 = list(Choice.objects.filter(question__choice__votes__exact=int(q)))
+                if len(val1)>0:
+                    results[count]= val1
+                    count+= 1
+                # if len(val1)>0:
+                #     results[count]= val1
+                #     count+= 1
+                # if len(val2)>0:
+                #     results[count]= val2
+                #     count+= 1
+            except ValueError:
+                print('')
+        finalresults = list(results.values())
+        return finalresults
+
+
 def IndexView(request):
     template_name = 'poll/index.html'
-    questions = Question.objects.order_by('pub_date')
-    form = FilterResults()
-    answer = ''
-    if request.method == 'POST':
-        # form = FilterResults(request.POST)
-        # if form.is_valid():
-        # status = form.cleaned_data['status']
-        # status = request.POST['status']
-        print(request.POST)
-        status = request.POST.get('status')
-        if status == '10':
-            choices_filtering = Choice.objects.all().filter(votes__gte=10).filter(votes__lt=20).order_by('choice_text')
-        elif status == '20':
-            choices_filtering = Choice.objects.all().filter(votes__gte=20).order_by('choice_text')
-        elif status == '5':
-            choices_filtering = Choice.objects.all().filter(votes__lte=5).order_by('choice_text')
-        else:
-            status = '0'
-            choices_filtering = Choice.objects.all().filter(votes__lte=0).order_by('choice_text')
+    questions = Question.objects.order_by('-pub_date')
+    choice = Choice.objects.all()
 
-        dataPlot = choices_filtering  # Choice.objects.all().filter(votes__gte=10).order_by('choice_text')
-        columnChart = chart(dataPlot, plotType="column3d", subCaption=status)  # pie3d column2d
-        return render(request, template_name,
-                            {'title': 'T20 Index Page', 'head': 'T20 Index Head', 'questions': questions, 'form': form,
-                             'output': columnChart.render()})
+    test=[12,23,45,67,89]
+
+
+    query = request.GET.get('q')
+    result=[]
+    if query:
+        result = get_queryset(query)
+        if len(result) == 0:
+            result.append('')
+    else:
+        result.append('')
+
+    total_votes = {}
+    for q in questions:
+        total = 0
+        id = q.id
+        for c in choice:
+            if c.question_id == id:
+                total += c.votes
+            total_votes[id] = total
+    print(total_votes)
+
+    # form = FilterResults()
+    if request.method == 'POST':
+        form = FilterResults(request.POST)
+        if form.is_valid():
+            # status = form.cleaned_data['status']
+            # status = request.POST['status']
+            status = request.POST.get('status')
+            if status == '10':
+                choices_filtering = Choice.objects.all().filter(votes__gte=10).filter(votes__lt=20).order_by(
+                    'choice_text')  # multiple condition
+            elif status == '20':
+                choices_filtering = Choice.objects.all().filter(votes__gte=20).order_by(
+                    'choice_text')  # single condition
+            elif status == '5':
+                choices_filtering = Choice.objects.all().filter(votes__lte=5).order_by('choice_text')
+            else:
+                status = '0'  # As Default : show all
+                choices_filtering = Choice.objects.all().filter(votes__gte=0).order_by('choice_text')
+
+            dataPlot = choices_filtering  # results Queryset after Filtering
+            # Queryset: Choice.objects.all().filter(votes__gte=10).order_by('choice_text')
+            columnChart = chart(dataPlot, plotType="column2d", subCaption=status)  # pie3d column2d
+            return render(request, template_name,
+                          {'title': 'T20 Index Page', 'head': 'T20 Index Head',
+                           'questions': questions,
+                           'form': form,
+                           'total': total_votes,
+                           'output': columnChart.render(),
+                           'count': calculate(),
+                           'searchResult':result[0]})
+            # count()/sum/max/min/avg
 
     else:
         form = FilterResults()
         return render(request, template_name,
-                      {'title': 'T20 Index Page', 'head': 'T20 Index Head', 'questions': questions, 'form': form})
+                      {'title': 'T20 Index Page',
+                       'head': 'T20 Index Head',
+                       'questions': questions,
+                       'form': form,
+                       'total': total_votes,
+                       'count': calculate(),
+                       'searchResult':result[0],'test':test})
 
 
+@login_required
+# @login_required(login_url='/poll/login/')
 def detail(request, question_id):
     template_name = 'poll/detail.html'
     question = get_object_or_404(Question, id=question_id)
     choice = Choice.objects.all()
     sum_up = [c.votes for c in choice if c.question_id == int(question_id)]
-    return render(request, template_name, {'question': question, 'question_total_votes': sum(sum_up)})
+    return render(request, template_name,
+                  {'question': question,
+                   'question_total_votes': sum(sum_up),
+                   'count': calculate()})
 
 
 def results(request, question_id):
     template_name = 'poll/results.html'
     question = get_object_or_404(Question, id=question_id)
-    return render(request, template_name, {'question': question})
+    return render(request, template_name, {'question': question, 'count': calculate()})
 
 
 def viewAllResults(request):
@@ -100,7 +168,6 @@ def viewAllResults(request):
             if c.question_id == q.id:
                 count += c.votes
         score_total[q.id] = count
-    print(score_total)
     total_votes = Choice.objects.all().aggregate(sumofvotes=Sum('votes'))
     page = request.GET.get('page', 1)
     paginator = Paginator(question, 5)
@@ -111,7 +178,10 @@ def viewAllResults(request):
     except EmptyPage:
         question = paginator.page(paginator.num_pages)
     return render(request, 'poll/viewall.html',
-                  {'question': question, 'choice': choice, 'total_votes': total_votes, 'score_total': score_total})
+                  {'question': question,
+                   'choice': choice,
+                   'total_votes': total_votes,
+                   'score_total': score_total, 'count': calculate()})
 
 
 def vote(request, question_id):
@@ -119,10 +189,11 @@ def vote(request, question_id):
     try:
         # question referencing choices set foreign key values
         selected_choice = question.choice_set.get(id=request.POST['choice'])
-        print("Choice ", selected_choice.question_id)
     except (KeyError, Choice.DoesNotExist):
         return render(request, 'poll/detail.html', {
-            'question': question, 'error_message': "Please Select or Create Choice first, Please Contact Administrator",
+            'question': question,
+            'error_message': "Please Select or Create Choice first, Please Contact Administrator",
+            'count': calculate()
         })
     else:
         selected_choice.votes += 1
@@ -146,7 +217,7 @@ def email(request):
                 # send_mail(subject, message, contactemail, ['admin@example.com'])
             except BadHeaderError:
                 return HttpResponse('Invalid header found.')
-    return render(request, "poll/contact.html", {'form': form})
+    return render(request, "poll/contact.html", {'form': form, 'count': calculate()})
 
 
 def thanks(request):
@@ -164,12 +235,11 @@ def add_poll(request):
             print(form.errors)
     else:
         form = QuestionForm()
-    return render(request, 'poll/add_poll.html', {'form': form})
+    return render(request, 'poll/add_poll.html', {'form': form, 'count': calculate()})
 
 
 def add_choice(request, question_id):
     question = Question.objects.get(id=question_id)
-    print(question)
     if request.method == 'POST':
         form = ChoiceForm(request.POST)
         if form.is_valid():  # form.cleaned_data
@@ -186,24 +256,25 @@ def add_choice(request, question_id):
             print(form.errors)
     else:
         form = ChoiceForm()
-    return render(request, 'poll/add_choice.html', {'form': form, 'question': question})
+    return render(request, 'poll/add_choice.html', {'form': form, 'question': question, 'count': calculate()})
 
 
+# @login_required
 def profile(request, username):
-    user = User.objects.get(username=username)
-    return render(request, "poll/profile.html", {'user': user})
-
-
-#     if request.method == 'POST':
-#         form = ProfileForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return render(request, 'poll/profile.html', {'form': form})
-#         else:
-#             print(form.errors)
-#     else:
-#         form = ProfileForm()
-#     return render(request, 'poll/profile.html', {'form': form})
+    user = User.objects.values().get(username=username)
+    # user = User.objects.values()
+    # return render(request, "poll/profile.html", {'user': user, 'form': form, 'count': calculate()})
+    form = ProfileForm(request.POST)
+    if request.method == 'POST':
+        if request.FILES['photo']:
+            myfile = request.FILES['photo']
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name,myfile)
+            uploaded_file = fs.url(filename)
+            print(uploaded_file)
+            return render(request,'poll/simple_upload.html',{'uploaded_file':uploaded_file,'user': user, 'form': form, 'count': calculate()})
+    else:
+        return render(request, 'poll/profile.html', {'user': user,'form':form,'count': calculate()})
 
 def delete_question(request, question_id):
     if request.method == 'GET':
@@ -221,47 +292,37 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            return redirect('home')
+            return redirect('index')
     else:
         form = SignUpForm()
-    return render(request, 'poll/signup.html', {'form': form})
-
-
-    # Create an object for the Area 2D chart using the FusionCharts class constructor
-    # http://www.fusioncharts.com/dev/chart-attributes.html?chart=column2d&attributeName=chart_theme
+    return render(request, 'poll/signup.html', {'form': form, 'count': calculate()})
 
 
 def chart(dataPlot, plotType, subCaption):
     """Data source """
     chartType = plotType  # "column2d"#pie3d
     chartID = "chart-1"  # chart ID unique for Page
-    chartHeight = "100%"  # chart Height
-    chartWidth = "100%"  # chart Width
+    chartHeight = "800"  # chart Height
+    chartWidth = "800"  # chart Width
+    renderer = "JavaScript"  # optional
+    # chartDataFormat = "json"  # json xml
     chartDataFormat = "json"  # json xml
     dataSource = {}
     dataSource['chart'] = {}
     dataSource['chart']['caption'] = "World T20 Cricket POLL"
     dataSource['chart']['subCaption'] = "Votes (" + subCaption + ")"
-    dataSource['chart']['xAxisName'] = "Questions"
-    dataSource['chart']['yAxisName'] = "Votes Count"
+    dataSource['chart']['xAsixName'] = ""
+    dataSource['chart']['yAsixName'] = ""
     dataSource['chart']['numberPrefix'] = ""
     dataSource['chart']['startingangle'] = "120"  # pie3d
     dataSource['chart']['slicingdistance'] = "10"  # pie3d
     dataSource['chart']['rotatevalues'] = "1"
     dataSource['chart']['plotToolText'] = "<div><b>$label</b><br/>Votes : <b>$value</b></div>"
-    dataSource['chart']['theme'] = "zune"  # ‘carbon’, ‘fint’, ‘ocean’, ‘zune’
-    dataSource['chart']['animation'] = "1"  
-    dataSource['chart']['animationDuration'] = "1" 
+    dataSource['chart']['theme'] = "fint"  # ‘carbon’, ‘fint’, ‘ocean’, ‘zune’
+    dataSource['chart']['animation'] = "1"  # ‘carbon’, ‘fint’, ‘ocean’, ‘zune’
+    dataSource['chart']['animationDuration'] = "1"  # ‘carbon’, ‘fint’, ‘ocean’, ‘zune’
     dataSource['chart']['exportEnabled'] = "1"
-    dataSource['chart']['use3DLighting'] = "1"
-    dataSource['chart']['maxZoomLimit'] = 100
-    dataSource['chart']['labelDisplay'] = "Wrap"
-    dataSource['chart']['placeValuesInside'] = "1"
-    dataSource['chart']['legendPosition']='RIGHT'
-    dataSource['chart']['plotGradientColor']='black'
-    dataSource['chart']['slantLabels']='1'
-
-
+    # dataSource['chart']['maxZoomLimit'] = 1000
     dataSource['data'] = []
     for item in dataPlot:
         q = get_object_or_404(Question, id=item.question_id)
@@ -275,8 +336,6 @@ def chart(dataPlot, plotType, subCaption):
 
 def plot(request, chartID='chart_ID', chart_type='line', chart_height=500):
     data = ChartData.check_valve_data()
-    # print(data)
-
     chart = {"renderTo": chartID, "type": chart_type, "height": chart_height, "width": chart_height}
     title = {"text": 'Votes Results'}
     xAxis = {"title": {"text": 'Votes'}}
@@ -291,28 +350,53 @@ def plot(request, chartID='chart_ID', chart_type='line', chart_height=500):
                                                'xAxis': xAxis, 'yAxis': yAxis})
 
 
-def home(request):
-    template_name = 'poll/index.html'
-    form = FilterResults()
+#Task: Plan with HighCharts
+def pollFilter(request):
+    """
+    Try URL :
+    http://127.0.0.1:8000/poll/filter/?status=10 ,
+    http://127.0.0.1:8000/poll/filter/?status=20&type=pie2d
+    for each status value below
+    """
+    template_name = 'poll/filterAjax.html'
     questions = Question.objects.order_by('pub_date')
-    if request.method == 'POST':
-        # form = FilterResults(request.POST)
-        status = request.POST['filter_option']
-        form = FilterResults(request.POST)
-        # print("in home ", status)
-        if status == "10":
-            choices_filtering = Choice.objects.all().filter(votes__gte=10).order_by('choice_text')
-        elif status == "20":
-            choices_filtering = Choice.objects.all().filter(votes__gte=20).order_by('choice_text')
-        elif status == "5":
-            choices_filtering = Choice.objects.all().filter(votes__lte=5).order_by('choice_text')
-        else:
-            status = "0"
-            choices_filtering = Choice.objects.all().filter(votes__lte=0).order_by('choice_text')
 
-        dataPlot = choices_filtering  # Choice.objects.all().filter(votes__gte=10).order_by('choice_text')
-        columnChart = chart(dataPlot, plotType="column2d", subCaption=status)  # pie3d column2d
+    status = request.GET.get('status')
+    charttype = request.GET.get('type')
+    if charttype is None:
+        charttype = 'column2d'
+    if status == "10":
+        choices_filtering = Choice.objects.all().filter(votes__gte=10).order_by('choice_text')
+    elif status == "20":
+        # choices_filtering = Choice.objects.all().filter(votes__gte=20).order_by('choice_text')
+        choices_filtering = Choice.objects.filter(Q(votes__gte=20)).order_by('choice_text')
+    elif status == "5":
+        choices_filtering = Choice.objects.all().filter(votes__lte=5).order_by('choice_text')
+    else:
+        status = "0"
+        choices_filtering = Choice.objects.all().filter(votes__gte=0).order_by('choice_text')
 
-        return render(request, template_name,
-                      {'title': 'T20 Index Page', 'head': 'T20 Index Head', 'questions': questions,
-                       'form': form, 'output': columnChart.render()})
+    dataPlot = choices_filtering
+    columnChart = chart(dataPlot, plotType=charttype, subCaption=status)  # pie3d column2d
+    return render(request, template_name,
+                  {'title': 'T20 Filter Page',
+                   'head': 'T20 Filter Head',
+                   'questions': questions,
+                   'output': columnChart.render(), 'count': calculate()})
+
+
+def testing(request, param1):
+    total = int(param1) + 20
+    val1 = "Method : ", request.method, "<br> Content Params ", request.content_params, "<br> Content Type ", request.content_type, "<br> Encoding ", request.encoding,
+    val2 = "<br>  Path Info ", request.path_info, "<br> Path ", request.path, " <br> Session ", request.session, " <br> cookies ", request.COOKIES
+    val3 = "<br><br> META ", request.META
+    val4 = "<br><br> Read ", request.read, " <br> Read Line ", request.readlines()
+    val = val1, " <br>", val2, "<br>", val3, "<br>", val4, "<br> sum is %d " % total
+    return HttpResponse(val)
+
+
+def calculate():
+    question = Question.objects.count()
+    choice = Choice.objects.count()
+    totalVotes = [c.votes for c in Choice.objects.all()]
+    return {'questionCount': question, 'choiceCount': choice, 'totalVotes': sum(totalVotes)}

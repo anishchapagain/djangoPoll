@@ -1,0 +1,58 @@
+{% extends "poll/base.html" %}
+{% block content %}
+    <script type="text/javascript">
+       function showValue() {
+            var oVal = document.getElementById("status");
+            var value = oVal.options[oVal.selectedIndex].value;
+{#            alert(oVal + " >> " + value);#}
+            $.ajax({
+                url: '/poll/filter/',
+                type: 'get',
+                data: {
+{#                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),#}
+                    status: value,
+{#                    type: charttype#}
+                },
+                success: function (data) {
+                    console.log(data);
+                    $("#chart-1").insertFusionCharts(data);
+{#                    $("#chart-1").updateFusionCharts(data);#}
+{#                    $("#chart-1").load(data);#}
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $("#status").change(function () {
+{#                alert("change");#}
+                showValue();
+            });
+        });
+
+
+    </script>
+    <b>note: try get url as below with available query paramater:</b>
+        http://127.0.0.1:8000/poll/filter/?status=10 ,
+    http://127.0.0.1:8000/poll/filter/?status=20&type=pie2d
+    <hr>
+    <p>Filtering</p>
+    <div>
+        <fieldset class="module aligned ">
+            <div class="form-row">
+                <label title="Voting Filters">Voting Filters</label>
+                <select title="Voting Filters" name="status" id="status">
+                    <option value=""> - - Select Option - -</option>
+                    <option value="10">Votes == 10 < 20</option>
+                    <option value="20">Votes >= 20</option>
+                    <option value="5">Votes >= 5</option>
+                    <option value="0">Votes 0/ALL</option>
+                </select>
+                <input type="checkbox" name="charttype" value="column2d" checked>column2d
+                <input type="checkbox" name="charttype" value="pie2d"> pie2d
+                <input type="checkbox" name="charttype" value="column3d"> column3d
+                <input type="checkbox" name="charttype" value="pie3d"> pie3d
+            </div>
+        </fieldset>
+        <div id="chart-1" style="border:1px solid #efefef">{{ output|safe }}</div>
+    </div>
+{% endblock %}

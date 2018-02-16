@@ -10,14 +10,14 @@
     <link href="{% static "css/base.css" %}" rel="stylesheet">
     <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-    {% load static %}
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-   <script type="text/javascript" src="{% static "fusioncharts/fusioncharts.js" %}"></script>
-        <script type="text/javascript" src="{% static "fusioncharts/fusioncharts.charts.js" %}"></script>
-   <script type="text/javascript" src="{% static "fusioncharts/themes/fusioncharts.theme.fint.js" %}"></script>
-        <script type="text/javascript" src={% static "fusioncharts/fusioncharts-jquery-plugin.js" %}></script>
-        <script type="text/javascript" src={% static "fusioncharts/fusioncharts-jquery-plugin.min.js" %}></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+{#    {% load static %}#}
+{#    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>#}
+{#    <script type="text/javascript" src="{% static "fusioncharts/fusioncharts.js" %}"></script>#}
+{#    <script type="text/javascript" src="{% static "fusioncharts/fusioncharts.charts.js" %}"></script>#}
+{#    <script type="text/javascript" src="{% static "fusioncharts/themes/fusioncharts.theme.fint.js" %}"></script>#}
+{#    <script type="text/javascript" src={% static "fusioncharts/fusioncharts-jquery-plugin.js" %}></script>#}
+{#    <script type="text/javascript" src={% static "fusioncharts/fusioncharts-jquery-plugin.min.js" %}></script>#}
 
 </head>
 
@@ -33,7 +33,7 @@
                     <a href="/admin/" style="color:#fffcc4">Admin</a> > >
                     <a href="/poll/index/"> POLL </a> > >
                     <a href="/poll/profile/{{ user.username }}" style="color:#fdffee">Profile</a> > >
-                    - - - - Welcome {{ user.username }} <a href="/poll/logout" style="color:#ffae2e">Logout</a>
+                    - - - - Welcome {{ user.username }} {{user.last_login}} <a href="/poll/logout" style="color:#ffae2e">Logout</a>
                 {% else %}
                     <a href="/poll/"> POLL </a>
                     <a href="/poll/login" style="color:#ff8319">Login</a>
