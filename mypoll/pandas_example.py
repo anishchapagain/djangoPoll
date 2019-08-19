@@ -10,8 +10,8 @@ raw_data = {'first_name': ['Jason', 'Molly', 'Tina', 'Jake', 'Amy'],
 df = pd.DataFrame(raw_data, columns = ['first_name', 'last_name', 'age', 'preTestScore', 'postTestScore'])
 print(df)
 #df.to_csv('../data/example.csv')
-#df = pd.read_csv('../data/example.csv')
-#df = pd.read_csv('../data/example.csv', header=None)
+df = pd.read_csv('../data/example.csv')
+df = pd.read_csv('../data/example.csv', header=None)
 #df = pd.read_csv('../data/example.csv', names=['UID', 'First Name', 'Last Name', 'Age', 'Pre-Test Score', 'Post-Test Score'])
 
 plt.bar(raw_data['age'],10,50,color='g')

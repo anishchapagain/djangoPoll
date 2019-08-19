@@ -1,8 +1,6 @@
 /*
  Highcharts JS v4.0.4 (2014-09-02)
-
  (c) 2011-2014 Torstein Honsi
-
  License: www.highcharts.com/license
 */
 (function(h){var k=h.Axis,y=h.Chart,l=h.Color,z=h.Legend,t=h.LegendSymbolMixin,u=h.Series,v=h.SVGRenderer,w=h.getOptions(),i=h.each,r=h.extend,A=h.extendClass,m=h.merge,o=h.pick,x=h.numberFormat,p=h.seriesTypes,s=h.wrap,n=function(){},q=h.ColorAxis=function(){this.isColorAxis=!0;this.init.apply(this,arguments)};r(q.prototype,k.prototype);r(q.prototype,{defaultColorAxisOptions:{lineWidth:0,gridLineWidth:1,tickPixelInterval:72,startOnTick:!0,endOnTick:!0,offset:0,marker:{animation:{duration:50},color:"gray",
